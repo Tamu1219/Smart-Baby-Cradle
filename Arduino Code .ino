@@ -1,6 +1,6 @@
 #include <Servo.h>
 
-// ── Pins ─────────────────────────────
+// Pins 
 #define MOISTURE_SENSOR A0
 #define SOUND_SENSOR    2 //A1
 #define LED             3    // Must be PWM pin
@@ -10,7 +10,7 @@
 
 // Constants
 #define MOISTURE_THRESHOLD  800
-//#define SOUND_THRESHOLD     200
+
 #define FADE_DELAY          5     // ms per brightness step
 
 Servo cradle;
@@ -33,7 +33,6 @@ void setup() {
 
 void loop() {
     int moistureValue = analogRead(MOISTURE_SENSOR);
-    //int soundValue    = analogRead(SOUND_SENSOR);
     int soundValue    = digitalRead(SOUND_SENSOR);
 
     Serial.print("Moisture: ");
@@ -50,10 +49,9 @@ void loop() {
 
     // Crying Detected → Rock + Light + Speaker
     if (soundValue == HIGH) {
-    // if (soundValue > SOUND_THRESHOLD) {
         Serial.println("Baby crying — Starting cradle + light + speaker");
         digitalWrite(RELAY_PIN, HIGH);
-        // notifyBuzzer();
+        notifyBuzzer();
         fadeLED();
         rockCradle();
         
@@ -91,13 +89,11 @@ void rockCradle() {
 void fadeLED() {
     for (int b = 1; b <= 120; b++) {
         if (digitalRead(SOUND_SENSOR) == HIGH ) return;
-        //if (analogRead(SOUND_SENSOR) < SOUND_THRESHOLD) return;
         analogWrite(LED, b);
         delay(FADE_DELAY);
     }
     for (int b = 120; b >= 1; b--) {
         if (digitalRead(SOUND_SENSOR) == HIGH ) return;
-        // if (analogRead(SOUND_SENSOR) < SOUND_THRESHOLD) return;
         analogWrite(LED, b);
         delay(FADE_DELAY);
     }
@@ -105,7 +101,7 @@ void fadeLED() {
 
 // Buzzer: short beeps for wet diaper
 void notifyBuzzer() {
-    for (int i = 0; i < 3 ; i++) {// we can change 3 based on how many times we want to be notified
+    for (int i = 0; i < 3 ; i++) {
         digitalWrite(BUZZER, HIGH);
         delay(300);
         digitalWrite(BUZZER, LOW);
